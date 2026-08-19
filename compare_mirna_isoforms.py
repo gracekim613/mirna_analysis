@@ -55,7 +55,7 @@ percentages_7a1 = [r['7a1'] for r in results]
 
 # Stacked bar chart
 ax.bar(x, percentages_8mer, width, label='8mer', color='paleturquoise')
-ax.bar(x, percentages_7m8, width, bottom=percentages_8mer, label='7m8', color='skyblue')
+ax.bar(x, percentages_7m8, width, bottom=percentages_8mer, label='7m8', color='aquamarine')
 ax.bar(x, percentages_7a1, width, 
        bottom=np.array(percentages_8mer) + np.array(percentages_7m8), 
        label='7a1', color='lightskyblue')
