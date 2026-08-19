@@ -101,14 +101,27 @@ def main():
         if df is not None:
             all_data[tissue_name] = df
             
-            # CSV로 저장
-            csv_path = OUTPUT_DIR / f'{tissue_name}_top10_mirnas.csv'
-            df.to_csv(csv_path, index=False)
-            print(f"💾 Saved to CSV: {csv_path}")
+    # B cell
+    df = pd.read_csv('mirna_data/b_cell_top10_mirnas.csv')
+    df['CV(%)'] = (df['stddev_expression'] / df['avg_expression'] * 100).round(2)
+    df.to_csv('mirna_data/b_cell_top10_mirnas.csv', index=False)
+    print("✓ B cell CV 추가됨!")
+    
+    # DC cell
+    df = pd.read_csv('mirna_data/dc_cell_top10_mirnas.csv')
+    df['CV(%)'] = (df['stddev_expression'] / df['avg_expression'] * 100).round(2)
+    df.to_csv('mirna_data/dc_cell_top10_mirnas.csv', index=False)
+    print("✓ DC cell CV 추가됨!")
+    
+    # Muscle
+    df = pd.read_csv('mirna_data/muscle_top10_mirnas.csv')
+    df['CV(%)'] = (df['stddev_expression'] / df['avg_expression'] * 100).round(2)
+    df.to_csv('mirna_data/muscle_top10_mirnas.csv', index=False)
+    print("✓ Muscle CV 추가됨!")
             
-            # 상위 5개 출력
-            print(f"\n📋 Top 5 miRNAs for {tissue_name}:")
-            print(df[['acc', 'avg_expression']].head().to_string(index=False))
+    # 상위 5개 출력
+    print(f"\n📋 Top 5 miRNAs for {tissue_name}:")
+    print(df[['acc', 'avg_expression']].head().to_string(index=False))
     
     print(f"\n{'='*60}")
     print("✨ 모든 데이터 추출 완료!")
