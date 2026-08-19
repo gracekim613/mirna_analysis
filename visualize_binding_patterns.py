@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # JSON 파일 읽기
-with open('mirna_data/dc_binding_patterns.json') as f:
+with open('mirna_data/DC_binding_patterns.json') as f:
     dc_cell = json.load(f)
 
 # 데이터 준비
