@@ -3,14 +3,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # JSON 파일 읽기
-with open('mirna_data/DC_binding_patterns.json') as f:
-    dc_cell = json.load(f)
+with open('mirna_data/muscle_cell_binding_patterns.json') as f:
+    muscle_cell = json.load(f)
 
 # 데이터 준비
-mirnas = list(dc_cell.keys())
-percentages_8mer = [dc_cell[m]['percentages']['8mer'] for m in mirnas]
-percentages_7m8 = [dc_cell[m]['percentages']['7m8'] for m in mirnas]
-percentages_7a1 = [dc_cell[m]['percentages']['7a1'] for m in mirnas]
+mirnas = list(muscle_cell.keys())
+percentages_8mer = [muscle_cell[m]['percentages']['8mer'] for m in mirnas]
+percentages_7m8 = [muscle_cell[m]['percentages']['7m8'] for m in mirnas]
+percentages_7a1 = [muscle_cell[m]['percentages']['7a1'] for m in mirnas]
 
 # Stacked Bar Chart
 fig, ax = plt.subplots(figsize=(14, 6))
@@ -25,14 +25,14 @@ ax.bar(x, percentages_7a1, width,
        label='7a1', color='lightseagreen')
 
 ax.set_ylabel('Percentage (%)', fontsize=12)
-ax.set_title('DC Cell miRNA Binding Pattern Distribution', fontsize=14)
+ax.set_title('Muscle Cell miRNA Binding Pattern Distribution', fontsize=14)
 ax.set_xticks(x)
 ax.set_xticklabels(mirnas, rotation=45, ha='right')
 ax.legend()
 ax.set_ylim(0, 100)
 
 plt.tight_layout()
-plt.savefig('mirna_data/dc_cell_binding_pattern_stacked.png', dpi=300)
+plt.savefig('mirna_data/muscle_cell_binding_pattern_stacked.png', dpi=300)
 plt.show()
 
-print("✓ 저장: mirna_data/dc_cell_binding_pattern_stacked.png")
+print("✓ 저장: mirna_data/muscle_cell_binding_pattern_stacked.png")
