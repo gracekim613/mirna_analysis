@@ -1,0 +1,210 @@
+"""
+miRNA 데이터 로드 및 TargetScan 연동을 위한 유틸리티
+
+저장된 miRNA 데이터를 로드하고, TargetScan이나 다른 분석 도구에
+쉽게 연결할 수 있도록 함수 제공
+"""
+
+import json
+import pandas as pd
+from pathlib import Path
+from typing import List, Dict, Union
+
+# ===== 설정 =====
+DATA_DIR = Path('./mirna_data')
+
+# ===== 데이터 로드 함수 =====
+
+def load_mirna_by_cell_type(cell_type: str) -> pd.DataFrame:
+    """
+    특정 세포타입의 miRNA 데이터 로드
+    
+    Args:
+        cell_type: 'muscle', 'b_cell', 'dc_cell' 중 하나
+    
+    Returns:
+        DataFrame: miRNA 정보 (acc, avg_expression, stddev_expression)
+    """
+    csv_path = DATA_DIR / f'{cell_type}_top10_mirnas.csv'
+    
+    if not csv_path.exists():
+        print(f"❌ Data file not found: {csv_path}")
+        print("   먼저 mirna_atlas_downloader.py를 실행하세요")
+        return None
+    
+    df = pd.read_csv(csv_path)
+    print(f"✅ Loaded {len(df)} miRNAs for {cell_type}")
+    return df
+
+
+def load_master_mirna_list() -> Dict:
+    """
+    모든 세포타입의 miRNA를 통합한 마스터 리스트 로드
+    
+    Returns:
+        dict: {cell_type: {mirna_names, expressions, std_devs}}
+    """
+    master_path = DATA_DIR / 'master_mirna_atlas.json'
+    
+    if not master_path.exists():
+        print(f"❌ Master file not found: {master_path}")
+        print("   먼저 mirna_atlas_downloader.py를 실행하세요")
+        return None
+    
+    with open(master_path, 'r') as f:
+        data = json.load(f)
+    
+    print(f"✅ Loaded master miRNA list")
+    return data
+
+
+def get_mirna_names(cell_type: str = None) -> List[str]:
+    """
+    특정 세포타입(또는 전체)의 miRNA 이름 리스트 반환
+    
+    Args:
+        cell_type: 'muscle', 'b_cell', 'dc_cell' 중 하나
+                   None이면 전체 miRNA 반환 (중복 제거)
+    
+    Returns:
+        list: miRNA 이름들
+    """
+    if cell_type is None:
+        # 전체 miRNA 리스트 (중복 제거)
+        master = load_master_mirna_list()
+        all_mirnas = set()
+        for cell_data in master.values():
+            all_mirnas.update(cell_data['mirna_names'])
+        return sorted(list(all_mirnas))
+    else:
+        # 특정 세포타입의 miRNA
+        df = load_mirna_by_cell_type(cell_type)
+        if df is not None:
+            return df['acc'].tolist()
+        return []
+
+
+def get_cell_type_specific_mirnas(cell_type: str) -> Dict[str, List[str]]:
+    """
+    특정 세포타입에만 발현되는 miRNA 찾기
+    
+    Args:
+        cell_type: 'muscle', 'b_cell', 'dc_cell' 중 하나
+    
+    Returns:
+        dict: {
+            'specific': [cell_type에만 있는 miRNA],
+            'shared': [다른 세포타입과 공유하는 miRNA]
+        }
+    """
+    master = load_master_mirna_list()
+    
+    target_mirnas = set(master[cell_type]['mirna_names'])
+    other_mirnas = set()
+    
+    for other_type, data in master.items():
+        if other_type != cell_type:
+            other_mirnas.update(data['mirna_names'])
+    
+    specific = list(target_mirnas - other_mirnas)
+    shared = list(target_mirnas & other_mirnas)
+    
+    return {
+        'specific': sorted(specific),
+        'shared': sorted(shared),
+        'total': len(target_mirnas)
+    }
+
+
+def export_for_targetscan(output_format: str = 'txt') -> str:
+    """
+    TargetScan용 miRNA 리스트 내보내기
+    
+    Args:
+        output_format: 'txt' (한 줄에 하나) 또는 'csv'
+    
+    Returns:
+        str: 저장된 파일 경로
+    """
+    master = load_master_mirna_list()
+    all_mirnas = get_mirna_names(cell_type=None)
+    
+    output_dir = DATA_DIR / 'targetscan'
+    output_dir.mkdir(exist_ok=True)
+    
+    if output_format == 'txt':
+        output_path = output_dir / 'mirna_list_for_targetscan.txt'
+        with open(output_path, 'w') as f:
+            for mirna in all_mirnas:
+                f.write(mirna + '\n')
+        print(f"✅ Exported to TXT: {output_path}")
+    
+    elif output_format == 'csv':
+        # 각 세포타입별 정보와 함께 CSV 저장
+        data = []
+        for cell_type, mirnas in master.items():
+            for mirna in mirnas['mirna_names']:
+                data.append({
+                    'mirna_name': mirna,
+                    'cell_type': cell_type,
+                    'is_specific': mirna in get_cell_type_specific_mirnas(cell_type)['specific']
+                })
+        
+        output_path = output_dir / 'mirna_list_with_cell_types.csv'
+        df = pd.DataFrame(data)
+        df.to_csv(output_path, index=False)
+        print(f"✅ Exported to CSV: {output_path}")
+    
+    return str(output_path)
+
+
+def summary() -> None:
+    """
+    로드된 모든 miRNA 데이터 요약 출력
+    """
+    print("\n" + "="*60)
+    print("📊 miRNA 데이터 요약")
+    print("="*60)
+    
+    master = load_master_mirna_list()
+    
+    for cell_type, data in master.items():
+        print(f"\n{cell_type.upper()}")
+        print(f"  ├─ Total miRNAs: {len(data['mirna_names'])}")
+        print(f"  ├─ Top 3: {', '.join(data['mirna_names'][:3])}")
+        
+        # 특이적 miRNA
+        specific = get_cell_type_specific_mirnas(cell_type)
+        print(f"  ├─ Cell-type specific: {len(specific['specific'])}")
+        if specific['specific']:
+            print(f"  │  └─ {', '.join(specific['specific'][:3])}")
+        print(f"  └─ Shared with others: {len(specific['shared'])}")
+    
+    all_mirnas = get_mirna_names(cell_type=None)
+    print(f"\n{'='*60}")
+    print(f"🎯 Total unique miRNAs across all cell types: {len(all_mirnas)}")
+    print(f"{'='*60}\n")
+
+
+# ===== 사용 예시 =====
+
+if __name__ == '__main__':
+    # 1. 데이터 로드
+    print("1️⃣  로드 테스트\n")
+    muscle_df = load_mirna_by_cell_type('muscle')
+    print(muscle_df.head(3) if muscle_df is not None else "No data")
+    
+    # 2. 세포타입별 특이적 miRNA
+    print("\n2️⃣  세포타입별 특이적 miRNA\n")
+    for cell_type in ['muscle', 'b_cell', 'dc_cell']:
+        specific = get_cell_type_specific_mirnas(cell_type)
+        print(f"{cell_type}: {specific['total']} total, {len(specific['specific'])} specific")
+    
+    # 3. TargetScan용 export
+    print("\n3️⃣  TargetScan용 내보내기\n")
+    export_for_targetscan(output_format='txt')
+    export_for_targetscan(output_format='csv')
+    
+    # 4. 요약
+    print("\n4️⃣  전체 요약")
+    summary()

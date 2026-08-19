@@ -1,0 +1,112 @@
+{
+  "hsa-miR-21-5p": {
+    "total_targets": 413,
+    "8mer": 69,
+    "7m8": 194,
+    "7a1": 150,
+    "percentages": {
+      "8mer": 16.71,
+      "7m8": 46.97,
+      "7a1": 36.32
+    }
+  },
+  "hsa-miR-22-3p": {
+    "total_targets": 671,
+    "8mer": 85,
+    "7m8": 444,
+    "7a1": 142,
+    "percentages": {
+      "8mer": 12.67,
+      "7m8": 66.17,
+      "7a1": 21.16
+    }
+  },
+  "hsa-miR-191-5p": {
+    "total_targets": 63,
+    "8mer": 2,
+    "7m8": 39,
+    "7a1": 21,
+    "percentages": {
+      "8mer": 3.17,
+      "7m8": 61.9,
+      "7a1": 33.33
+    }
+  },
+  "hsa-miR-146b-5p": {
+    "total_targets": 299,
+    "8mer": 71,
+    "7m8": 102,
+    "7a1": 126,
+    "percentages": {
+      "8mer": 23.75,
+      "7m8": 34.11,
+      "7a1": 42.14
+    }
+  },
+  "hsa-miR-378a-3p": {
+    "total_targets": 231,
+    "8mer": 30,
+    "7m8": 112,
+    "7a1": 89,
+    "percentages": {
+      "8mer": 12.99,
+      "7m8": 48.48,
+      "7a1": 38.53
+    }
+  },
+  "hsa-miR-142-5p": {
+    "total_targets": 1028,
+    "8mer": 245,
+    "7m8": 475,
+    "7a1": 308,
+    "percentages": {
+      "8mer": 23.83,
+      "7m8": 46.21,
+      "7a1": 29.96
+    }
+  },
+  "hsa-let-7a-5p": {
+    "total_targets": 1386,
+    "8mer": 463,
+    "7m8": 481,
+    "7a1": 442,
+    "percentages": {
+      "8mer": 33.41,
+      "7m8": 34.7,
+      "7a1": 31.89
+    }
+  },
+  "hsa-let-7f-5p": {
+    "total_targets": 1386,
+    "8mer": 463,
+    "7m8": 481,
+    "7a1": 442,
+    "percentages": {
+      "8mer": 33.41,
+      "7m8": 34.7,
+      "7a1": 31.89
+    }
+  },
+  "hsa-miR-26a-5p": {
+    "total_targets": 1209,
+    "8mer": 441,
+    "7m8": 229,
+    "7a1": 539,
+    "percentages": {
+      "8mer": 36.48,
+      "7m8": 18.94,
+      "7a1": 44.58
+    }
+  },
+  "hsa-miR-92a-3p": {
+    "total_targets": 1168,
+    "8mer": 413,
+    "7m8": 350,
+    "7a1": 405,
+    "percentages": {
+      "8mer": 35.36,
+      "7m8": 29.97,
+      "7a1": 34.67
+    }
+  }
+}
