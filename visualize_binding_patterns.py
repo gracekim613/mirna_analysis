@@ -18,11 +18,11 @@ fig, ax = plt.subplots(figsize=(14, 6))
 x = np.arange(len(mirnas))
 width = 0.6
 
-ax.bar(x, percentages_8mer, width, label='8mer', color='powderblue')
-ax.bar(x, percentages_7m8, width, bottom=percentages_8mer, label='7m8', color='lightskyblue')
+ax.bar(x, percentages_8mer, width, label='8mer', color='aquamarine')
+ax.bar(x, percentages_7m8, width, bottom=percentages_8mer, label='7m8', color='turquoise')
 ax.bar(x, percentages_7a1, width, 
        bottom=np.array(percentages_8mer) + np.array(percentages_7m8), 
-       label='7a1', color='darkturquoise')
+       label='7a1', color='lightseagreen')
 
 ax.set_ylabel('Percentage (%)', fontsize=12)
 ax.set_title('DC Cell miRNA Binding Pattern Distribution', fontsize=14)
